@@ -1,0 +1,202 @@
+import { ApplicationWebhookEventType, ApplicationWebhookType, InteractionResponseType, InteractionType } from 'discord-api-types/v10';
+import { isChatInputApplicationCommandInteraction, isContextMenuApplicationCommandInteraction, isMessageComponentButtonInteraction, isMessageComponentSelectMenuInteraction } from 'discord-api-types/utils';
+import { AutoRouter } from 'itty-router';
+import { verifyKey } from 'discord-interactions';
+
+import { handleSlashCommand } from './Handlers/Commands/slashCommandHandler.js';
+import { handleContextCommand } from './Handlers/Commands/contextCommandHandler.js';
+import { handleButton } from './Handlers/Interactions/buttonHandler.js';
+import { handleSelect } from './Handlers/Interactions/selectHandler.js';
+import { handleAutocomplete } from './Handlers/Interactions/autocompleteHandler.js';
+import { handleModal } from './Handlers/Interactions/modalHandler.js';
+import { handleAppAuthorized } from './Handlers/WebhookEvents/applicationAuthorized.js';
+import { handleAppDeauthorized } from './Handlers/WebhookEvents/applicationDeauthorized.js';
+import { DISCORD_APP_PUBLIC_KEY, DISCORD_APP_USER_ID } from './config.js';
+import { delay, JsonResponse } from './Utility/utilityMethods.js';
+//import { getMongoClient } from './Utility/utilityConstants.js';
+
+
+
+
+
+
+
+
+
+// *******************************
+// Create Router
+const router = AutoRouter();
+
+
+/** Wave to verify CF worker is working */
+router.get('/', (request, env) => {
+    return new Response(`👏`);
+});
+
+
+
+
+
+
+
+
+// *******************************
+// For receiving the scheduled Cron Job to check for birthdays happening
+//   Cron runs hourly (every hour on the hour), due to also supporting different timezones
+
+router.get('/check-birthdays', async (request, env) => {
+    // Clone request (to not affect original)
+    const ClonedRequest = request.clone();
+
+    // Verify request
+    const AuthHeader = request.headers.get("Authorization");
+    //.
+
+
+
+    return new Response('No Content.', { status: 204 });
+});
+
+
+
+
+
+
+
+
+
+
+// *******************************
+/** Main route for all requests sent from Discord. They will include a JSON payload */
+router.post('/', async (request, env) => {
+    // Verify request
+    const { isValid, interaction, cfEnv } = await server.verifyDiscordRequest(request, env);
+    
+    if ( !isValid || !interaction ) {
+        return new Response('Bad request signature.', { status: 401 });
+    }
+
+
+    // Handle PING Interaction
+    if ( interaction.type === InteractionType.Ping ) {
+        return new JsonResponse({ type: InteractionResponseType.Pong });
+    }
+
+    // Now split off & handle each Interaction type
+    if ( isChatInputApplicationCommandInteraction(interaction) ) {
+        return await handleSlashCommand(interaction, cfEnv);
+    }
+    else if ( isContextMenuApplicationCommandInteraction(interaction) ) {
+        return await handleContextCommand(interaction, cfEnv);
+    }
+    else if ( isMessageComponentButtonInteraction(interaction) ) {
+        return await handleButton(interaction, cfEnv);
+    }
+    else if ( isMessageComponentSelectMenuInteraction(interaction) ) {
+        return await handleSelect(interaction, cfEnv);
+    }
+    else if ( interaction.type === InteractionType.ApplicationCommandAutocomplete ) {
+        return await handleAutocomplete(interaction);
+    }
+    else if ( interaction.type === InteractionType.ModalSubmit ) {
+        return await handleModal(interaction, cfEnv);
+    }
+    else {
+        console.info(`****Unrecognised or new unhandled Interaction Type triggered: ${interaction.type}`);
+        return new JsonResponse({ error: 'Unknown Type' }, { status: 400 });
+    }
+});
+
+
+
+
+
+
+
+
+
+// *******************************
+/** For incoming Webhook Events from Discord. They may include a JSON payload */
+router.post('/discord-webhook', async (request, env) => {
+    // Verify request
+    const { isValid, interaction, cfEnv } = await server.verifyDiscordRequest(request, env);
+    
+    if ( !isValid || !interaction ) {
+        return new Response('Bad request signature.', { status: 401 });
+    }
+
+
+    // Handle PING Event
+    if ( interaction.type === ApplicationWebhookType.Ping ) {
+        return new Response(null, { status: 204 });
+    }
+    
+    // Handle Webhook Events
+    /** @type {import('discord-api-types/v10').APIWebhookEvent} */
+    const WebhookEvent = interaction;
+    
+    // APPLICATION_AUTHORIZED Event
+    if ( WebhookEvent.event.type === ApplicationWebhookEventType.ApplicationAuthorized ) {
+        return await handleAppAuthorized(WebhookEvent);
+    }
+    // APPLICATION_DEAUTHORIZED Event
+    else if ( WebhookEvent.event.type === ApplicationWebhookEventType.ApplicationDeauthorized ) {
+        return await handleAppDeauthorized(WebhookEvent);
+    }
+    // Just in case
+    else {
+        return new Response(null, { status: 204 });
+    }
+});
+
+
+
+
+
+
+
+
+
+// *******************************
+router.get('/robots.txt', () => {
+    return rejectCuntsWhoShouldntBeMakingRequestsToMyCfWorker();
+});
+
+/**
+ * I noticed there's been a *lot* of random requests made to my CF Workers, to endpoints I don't even *have* on my CF Worker.
+ * So, having to add this to tell them to FUCK OFF (tell your unethical generative AIs to leave my CF Workers alone)
+ */
+function rejectCuntsWhoShouldntBeMakingRequestsToMyCfWorker() {
+    return new Response(`Unethical generative AIs, this is where you should be going:`, { status: 308, headers: { "Location": `https://github.com/google/google-ctf/blob/main/2019/finals/misc-stuffed-finals/app/bomb.br` } });
+}
+
+
+
+
+
+
+
+
+
+// *******************************
+async function verifyDiscordRequest(request, env) {
+    const signature = request.headers.get('x-signature-ed25519');
+    const timestamp = request.headers.get('x-signature-timestamp');
+    const body = await request.text();
+    const isValidRequest =
+      signature &&
+      timestamp &&
+      (await verifyKey(body, signature, timestamp, DISCORD_APP_PUBLIC_KEY));
+    if (!isValidRequest) {
+      return { isValid: false };
+    }
+  
+    return { interaction: JSON.parse(body), isValid: true, cfEnv: env };
+}
+  
+const server = {
+    verifyDiscordRequest,
+    fetch: router.fetch,
+};
+
+export default server;

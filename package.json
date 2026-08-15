@@ -1,0 +1,32 @@
+{
+  "name": "cakeday",
+  "version": "1.0.0",
+  "description": "A Discord Server App for announcing member birthdays and managing birthday roles",
+  "main": "index.js",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "wrangler dev",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "publish": "wrangler deploy"
+  },
+  "keywords": [
+    "discord",
+    "discord-app",
+    "discord-bot",
+    "birthday"
+  ],
+  "author": "TwilightZebby",
+  "license": "SEE LICENSE IN https://github.com/TwilightZebby/license/blob/main/license.md",
+  "dependencies": {
+    "@discordjs/collection": "2.1.1",
+    "discord-api-types": "0.38.53",
+    "discord-interactions": "4.4.0",
+    "itty-router": "5.0.23",
+    "mongodb": "7.1.1",
+    "undici": "8.10.0"
+  },
+  "devDependencies": {
+    "wrangler": "4.112.0"
+  }
+}

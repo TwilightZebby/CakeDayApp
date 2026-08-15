@@ -1,0 +1,4 @@
+contact_links:
+  - name: Add App
+    url: https://discord.com/oauth2/authorize?client_id=1504090747475853523
+    about: Want to add CakeDay to your own Server? Use this link here!
