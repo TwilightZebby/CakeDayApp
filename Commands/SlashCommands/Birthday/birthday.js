@@ -1,5 +1,9 @@
-import { ApplicationCommandType, InteractionContextType, ApplicationIntegrationType, MessageFlags, InteractionResponseType, ApplicationCommandOptionType } from 'discord-api-types/v10';
+import { ApplicationCommandType, InteractionContextType, ApplicationIntegrationType, MessageFlags, InteractionResponseType, ApplicationCommandOptionType, ComponentType, ButtonStyle } from 'discord-api-types/v10';
 import { JsonResponse } from '../../../Utility/utilityMethods.js';
+
+
+const MonthsWith31Days = [ 0, 2, 4, 6, 7, 9, 11 ];
+const MonthsWith30Days = [ 3, 5, 8, 10 ];
 
 
 export const SlashCommand = {
@@ -146,14 +150,171 @@ export const SlashCommand = {
      * @param {*} cfEnv 
      */
     async executeCommand(interaction, interactionUser, usedCommandName, cfEnv) {
+        // Grab subcommand used
+        const InputSubcommand = interaction.data.options.find(item => item.type === ApplicationCommandOptionType.Subcommand);
 
-        console.log(Temporal.Now.plainDateTimeISO());
-        
+        // Check to see if User already has a birthday set
+        const { results } = await cfEnv.DATABASE
+            .prepare("SELECT user_id FROM userbirthdays WHERE user_id = ? LIMIT 1")
+            .bind(interactionUser.id)
+            .run();
+
+        // SET subcommand was used
+        if ( InputSubcommand.name === "set" ) {
+            // If User already has a birthday set, reject instantly
+            if ( results != null && results.length > 0) {
+                return new JsonResponse({
+                    type: InteractionResponseType.ChannelMessageWithSource,
+                    data: {
+                        flags: MessageFlags.Ephemeral,
+                        content: `You already have a birthday set in CakeDay!\nIf you wish to remove your birthday from this App, use </birthday remove:${interaction.data.id}>`
+                    }
+                });
+            }
+
+            // User doesn't have a birthday set, so try to add it
+            //   (While also validating "day" input argument against the inputted "month")
+            
+            /** @type import("discord-api-types/v10").APIApplicationCommandInteractionDataStringOption */
+            const InputMonth = InputSubcommand.options.find(item => item.name === "month");
+            const IntInputMonth = parseInt(InputMonth.value);
+
+            /** @type import("discord-api-types/v10").APIApplicationCommandInteractionDataIntegerOption */
+            const InputDay = InputSubcommand.options.find(item => item.name === "day");
+
+            if ( MonthsWith30Days.includes(IntInputMonth) && InputDay.value === 31 ) {
+                return new JsonResponse({
+                    type: InteractionResponseType.ChannelMessageWithSource,
+                    data: {
+                        flags: MessageFlags.Ephemeral,
+                        content: `Sorry, but that wasn't a valid date! (For April/June/September/November, it must be between 1 and 30, inclusive)`
+                    }
+                });
+            }
+            else if ( IntInputMonth === 1 && InputDay.value > 29 ) {
+                return new JsonResponse({
+                    type: InteractionResponseType.ChannelMessageWithSource,
+                    data: {
+                        flags: MessageFlags.Ephemeral,
+                        content: `Sorry, but that wasn't a valid date! (For February, it must be between 1 and 29, inclusive)`
+                    }
+                });
+            }
+            else if ( IntInputMonth === 1 && InputDay.value === 29 ) {
+                /** @type {import("discord-api-types/v10").APIMessageTopLevelComponent[]} */
+                let responseComponents = [{
+                    type: ComponentType.TextDisplay,
+                    content: `You are about to set your birthday as 29th February, a date that can only exist during Leap Years.\nAs such, CakeDay will treat 28th February as your birthday on other (non-leap) years.\n\nPlease confirm using the button below if this is suitable for you. If not, you can delete/dismiss this message and your birthday will *NOT* be saved.`
+                }, {
+                    type: ComponentType.ActionRow,
+                    components: [{
+                        type: ComponentType.Button,
+                        style: ButtonStyle.Primary,
+                        custom_id: `feb29_${interactionUser.id}_${IntInputMonth}_${InputDay.value}`,
+                        label: `Confirm`
+                    }]
+                }];
+
+                return new JsonResponse({
+                    type: InteractionResponseType.ChannelMessageWithSource,
+                    data: {
+                        flags: MessageFlags.Ephemeral | MessageFlags.IsComponentsV2,
+                        components: responseComponents
+                    }
+                });
+            }
+            else {
+                try {
+                    const { success } = await cfEnv.DATABASE
+                        .prepare("INSERT INTO userbirthdays ('user_id', 'month_of_birth', 'day_of_birth') VALUES (?, ?, ?)")
+                        .bind(interactionUser.id, IntInputMonth, InputDay.value)
+                        .run();
+
+                    if ( success === false ) {
+                        return new JsonResponse({
+                            type: InteractionResponseType.ChannelMessageWithSource,
+                            data: {
+                                flags: MessageFlags.Ephemeral,
+                                content: `Sorry, but something went wrong while trying to save your newly added birthday. Please try again later...`
+                            }
+                        });
+                    }
+                    else {
+                        return new JsonResponse({
+                            type: InteractionResponseType.ChannelMessageWithSource,
+                            data: {
+                                flags: MessageFlags.Ephemeral,
+                                content: `Successfully added your birthday to CakeDay!`
+                            }
+                        });
+                    }
+                }
+                catch (err) {
+                    return new JsonResponse({
+                        type: InteractionResponseType.ChannelMessageWithSource,
+                        data: {
+                            flags: MessageFlags.Ephemeral,
+                            content: `Sorry, but something went wrong while trying to save your newly added birthday. Please try again later...`
+                        }
+                    });
+                }
+            }
+        }
+        // REMOVE subcommand was used
+        else if ( InputSubcommand.name === "remove" ) {
+            // Check to make sure User *HAS* a saved birthday to remove
+            if ( results != null && results.length === 0) {
+                return new JsonResponse({
+                    type: InteractionResponseType.ChannelMessageWithSource,
+                    data: {
+                        flags: MessageFlags.Ephemeral,
+                        content: `You do not have a birthday saved in CakeDay.\nIf you wish to add your birthday to this App, use </birthday set:${interaction.data.id}>`
+                    }
+                });
+            }
+
+            // Attempt to remove birthday
+            try {
+                const { success } = await cfEnv.DATABASE
+                    .prepare("DELETE FROM userbirthdays WHERE user_id = ?")
+                    .bind(interactionUser.id)
+                    .run();
+
+                if ( success === false ) {
+                    return new JsonResponse({
+                        type: InteractionResponseType.ChannelMessageWithSource,
+                        data: {
+                            flags: MessageFlags.Ephemeral,
+                            content: `Sorry, but something went wrong while trying to remove your birthday from CakeDay. Please try again later...`
+                        }
+                    });
+                }
+                else {
+                    return new JsonResponse({
+                        type: InteractionResponseType.ChannelMessageWithSource,
+                        data: {
+                            flags: MessageFlags.Ephemeral,
+                            content: `Successfully removed your birthday from CakeDay`
+                        }
+                    });
+                }
+            }
+            catch (err) {
+                return new JsonResponse({
+                    type: InteractionResponseType.ChannelMessageWithSource,
+                    data: {
+                        flags: MessageFlags.Ephemeral,
+                        content: `Sorry, but something went wrong while trying to remove your birthday from CakeDay. Please try again later...`
+                    }
+                });
+            }
+        }
+
         return new JsonResponse({
             type: InteractionResponseType.ChannelMessageWithSource,
             data: {
                 flags: MessageFlags.Ephemeral,
-                content: "This Command has not yet been implemented yet!"
+                content: "Something went badly wrong. If you see this error, please let CakeDay's developer know by either:\n- Opening an [Issue on GitHub](<https://github.com/TwilightZebby/CakeDayApp/issues/new/choose>)\n- Or via letting `@twilightzebby` know on Discord (if you're in a mutual Server with him)"
             }
         });
     }

@@ -1,36 +1,10 @@
 import { Collection } from '@discordjs/collection';
 import { ChannelType } from 'discord-api-types/v10';
-import { MongoClient, ServerApiVersion } from 'mongodb';
-import { DISCORD_TOKEN, MONGO_URI, } from '../config.js';
-
-let VarMongoClient;
+import { DISCORD_TOKEN } from '../config.js';
 
 
 // *******************************
 //  Exports
-
-/**
- * Mongo Client Connection
- * 
- * @returns {Promise<MongoClient>}
- */
-export const getMongoClient = async () => {
-    if ( !VarMongoClient ) {
-        let createdClient = new MongoClient(MONGO_URI, {
-            serverApi: {
-                version: ServerApiVersion.v1,
-                strict: true,
-                deprecationErrors: true
-            }
-        });
-        await createdClient.connect();
-        VarMongoClient = createdClient;
-        return createdClient;
-    }
-    else {
-        return VarMongoClient;
-    }
-}
 
 /** Utility & Command/Interaction Collections */
 export const UtilityCollections = {

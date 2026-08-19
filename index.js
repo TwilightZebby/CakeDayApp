@@ -11,9 +11,8 @@ import { handleAutocomplete } from './Handlers/Interactions/autocompleteHandler.
 import { handleModal } from './Handlers/Interactions/modalHandler.js';
 import { handleAppAuthorized } from './Handlers/WebhookEvents/applicationAuthorized.js';
 import { handleAppDeauthorized } from './Handlers/WebhookEvents/applicationDeauthorized.js';
-import { DISCORD_APP_PUBLIC_KEY, DISCORD_APP_USER_ID } from './config.js';
+import { DISCORD_APP_PUBLIC_KEY } from './config.js';
 import { delay, JsonResponse } from './Utility/utilityMethods.js';
-//import { getMongoClient } from './Utility/utilityConstants.js';
 
 
 

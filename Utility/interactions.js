@@ -11,7 +11,7 @@ export const Autocompletes = {
 }
 
 export const Buttons = {
-    //.
+    'feb29': () => import('../Interactions/Buttons/feb29.js'),
 }
 
 export const Selects = {
