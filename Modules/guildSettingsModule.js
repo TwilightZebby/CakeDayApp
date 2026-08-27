@@ -65,7 +65,7 @@ export function settingsShowDefaultMainPanel(interaction, responseType) {
             spacing: SeparatorSpacingSize.Large
         }, {
             type: ComponentType.TextDisplay,
-            content: `## Birthday Announcements\nConfigure the location and appearance of Birthday Announcements.\n-# Having no Channel set disables this module.\n\n**Current Status:** No Channel set.`
+            content: `## Birthday Announcements\nConfigure the location of Birthday Announcements.\n-# Having no Channel set disables this module.\n\n**Current Status:** No Channel set.`
         }, {
             type: ComponentType.ActionRow,
             components: [{
@@ -165,16 +165,16 @@ export function settingsShowConfiguredMainPanel(interaction, currentConfigData, 
         birthdayAnnouncementsString = `Posts in <#${currentConfigData.announcement_channel_id}>`;
 
         if ( currentConfigData.announcement_sidebar_color != null ) {
-            birthdayAnnouncementsString += ` with sidebar colour of \`${currentConfigData.announcement_sidebar_color}\``;
+            //birthdayAnnouncementsString += ` with sidebar colour of \`${currentConfigData.announcement_sidebar_color}\``;
 
             birthdayAnnouncementsComponents = [
-                {
+                /* {
                     type: ComponentType.Button,
                     style: ButtonStyle.Secondary,
                     custom_id: `birthdayposts_edit-color_${currentConfigData.announcement_sidebar_color}`,
                     label: `Change Sidebar`,
                     emoji: { id: "1539969115220082728", name: "ColourEdit" }
-                },
+                }, */
                 {
                     type: ComponentType.Button,
                     style: ButtonStyle.Secondary,
@@ -182,13 +182,13 @@ export function settingsShowConfiguredMainPanel(interaction, currentConfigData, 
                     label: `Change Channel`,
                     emoji: { id: "1539965398609305660", name: "AnnouncementEdit" }
                 },
-                {
+                /* {
                     type: ComponentType.Button,
                     style: ButtonStyle.Danger,
                     custom_id: `birthdayposts_remove-color_${currentConfigData.announcement_sidebar_color}`,
                     label: `Remove Sidebar`,
                     emoji: { id: "1539969116344160348", name: "ColourRemove" }
-                },
+                }, */
                 {
                     type: ComponentType.Button,
                     style: ButtonStyle.Danger,
@@ -200,13 +200,13 @@ export function settingsShowConfiguredMainPanel(interaction, currentConfigData, 
         }
         else {
             birthdayAnnouncementsComponents = [
-                {
+                /* {
                     type: ComponentType.Button,
                     style: ButtonStyle.Secondary,
                     custom_id: `birthdayposts_add-color`,
                     label: `Add Sidebar`,
                     emoji: { id: "1539969113982632077", name: "ColourAdd" }
-                },
+                }, */
                 {
                     type: ComponentType.Button,
                     style: ButtonStyle.Secondary,
@@ -251,7 +251,7 @@ export function settingsShowConfiguredMainPanel(interaction, currentConfigData, 
             spacing: SeparatorSpacingSize.Large
         }, {
             type: ComponentType.TextDisplay,
-            content: `## Birthday Announcements\nConfigure the location and appearance of Birthday Announcements.\n-# Having no Channel set disables this module.\n\n**Current Status:** ${birthdayAnnouncementsString}`
+            content: `## Birthday Announcements\nConfigure the location of Birthday Announcements.\n-# Having no Channel set disables this module.\n\n**Current Status:** ${birthdayAnnouncementsString}`
         }, {
             type: ComponentType.ActionRow,
             components: birthdayAnnouncementsComponents

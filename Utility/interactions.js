@@ -17,11 +17,15 @@ export const Buttons = {
     'settingsreturntomainpage': () => import('../Interactions/Buttons/Management/settingsreturntomainpage.js'),
     'birthdayrole': () => import('../Interactions/Buttons/Management/birthdayrole.js'),
     'removebirthdayrole': () => import('../Interactions/Buttons/Management/removebirthdayrole.js'),
+    'birthdayposts': () => import('../Interactions/Buttons/Management/birthdayposts.js'),
+    'removebirthdaychannel': () => import('../Interactions/Buttons/Management/removebirthdaychannel.js'),
 }
 
 export const Selects = {
     'newbirthdayrole': () => import('../Interactions/Selects/Management/newbirthdayrole.js'),
     'editbirthdayrole': () => import('../Interactions/Selects/Management/editbirthdayrole.js'),
+    'newbirthdaychannel': () => import('../Interactions/Selects/Management/newbirthdaychannel.js'),
+    'editbirthdaychannel': () => import('../Interactions/Selects/Management/editbirthdaychannel.js'),
 }
 
 export const Modals = {

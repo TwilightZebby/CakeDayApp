@@ -33,7 +33,6 @@ export const Select = {
 
         // Don't do anything to DB if selected Role is the same as existing Role
         if ( InputRoleId === OriginalRoleId ) {
-            console.log("DON'T MAKE THIS APPEAR I SWEAR TO WUMPUS");
             return await settingsFetchAndShowMainPanel(interaction, 'EDIT', cfEnv);
         }
 

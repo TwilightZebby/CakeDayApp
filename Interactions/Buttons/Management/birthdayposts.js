@@ -1,4 +1,4 @@
-import { ButtonStyle, ComponentType, InteractionResponseType, SelectMenuDefaultValueType, SeparatorSpacingSize } from 'discord-api-types/v10';
+import { ButtonStyle, ChannelType, ComponentType, InteractionResponseType, SelectMenuDefaultValueType, SeparatorSpacingSize } from 'discord-api-types/v10';
 import { hexToRgb, JsonResponse, rgbArrayToInteger } from '../../../Utility/utilityMethods.js';
 
 
@@ -7,12 +7,12 @@ export const Button = {
      * @example "buttonName_extraData"
      * @type {String}
      */
-    name: "birthdayrole",
+    name: "birthdayposts",
 
     /** Button's Description, mostly for reminding me what it does!
      * @type {String}
      */
-    description: "Manages the Birthday Role module in the Settings command",
+    description: "Manages the Birthday Announcements module in the Settings command",
 
     /** Button's cooldown, in seconds (whole number integers!)
      * @type {Number}
@@ -33,58 +33,24 @@ export const Button = {
         let responseComponents = [];
 
 
-        if ( InputAction === 'set' ) {
-            // Show Role Select for assigning a Role as the new Birthday Role
+        if ( InputAction === 'set-channel' ) {
+            // Sets which Text-based Channel to post Birthday Announcements in
 
             responseComponents = [{
                 type: ComponentType.Container,
                 accent_color: rgbArrayToInteger(hexToRgb('#2b68c4')),
                 components: [{
                     type: ComponentType.TextDisplay,
-                    content: `# __CakeDay Settings: Set Birthday Role__\nPlease use the Select Menu below to assign a Role as this Server's Birthday Role.\n\n> -# :information_source: Please be sure that your selected Birthday Role is *below* the highest Role CakeDay has on your Server. Otherwise, CakeDay will not be able to grant it to your Members on their birthday!`
+                    content: `# __CakeDay Settings: Set Announcement Channel__\nPlease use the Select Menu below to set which Channel CakeDay should post your Members' Birthday Announcements in.\n\n> -# :information_source: Please be sure that CakeDay has *both* "**View Channel**" and "**Send Messages**" Permissions at minimum in the Channel you select.`
                 }, {
                     type: ComponentType.ActionRow,
                     components: [{
-                        type: ComponentType.RoleSelect,
-                        custom_id: `newbirthdayrole`,
-                        placeholder: `Search for a Role`,
-                        min_values: 1,
-                        max_values: 1
-                    }]
-                }, {
-                    type: ComponentType.Separator,
-                    divider: true,
-                    spacing: SeparatorSpacingSize.Large
-                }, {
-                    type: ComponentType.ActionRow,
-                    components: [{
-                        type: ComponentType.Button,
-                        style: ButtonStyle.Secondary,
-                        custom_id: `settingsreturntomainpage`,
-                        label: `Cancel`
-                    }]
-                }]
-            }];
-        }
-        else if ( InputAction === 'edit' ) {
-            // Show pre-filled Role Select for changing which Role is assigned as the Birthday Role
-            const InputRoleId = SplitCustomId[2];
-
-            responseComponents = [{
-                type: ComponentType.Container,
-                accent_color: rgbArrayToInteger(hexToRgb('#2b68c4')),
-                components: [{
-                    type: ComponentType.TextDisplay,
-                    content: `# __CakeDay Settings: Edit Birthday Role__\nPlease use the Select Menu below to change which Role is this Server's Birthday Role.\n**This Server's current Birthday Role is <@&${InputRoleId}>**\n\n> -# :information_source: Please be sure that your new selected Birthday Role is *below* the highest Role CakeDay has on your Server. Otherwise, CakeDay will not be able to grant it to your Members on their birthday!`
-                }, {
-                    type: ComponentType.ActionRow,
-                    components: [{
-                        type: ComponentType.RoleSelect,
-                        custom_id: `editbirthdayrole_${InputRoleId}`,
-                        placeholder: `Select a Role`,
+                        type: ComponentType.ChannelSelect,
+                        custom_id: `newbirthdaychannel`,
+                        placeholder: `Search for a Channel`,
                         min_values: 1,
                         max_values: 1,
-                        default_values: [ { type: SelectMenuDefaultValueType.Role, id: InputRoleId } ]
+                        channel_types: [ ChannelType.GuildText, ChannelType.GuildAnnouncement, ChannelType.PublicThread ]
                     }]
                 }, {
                     type: ComponentType.Separator,
@@ -101,16 +67,52 @@ export const Button = {
                 }]
             }];
         }
-        else {
-            // Show confirmation prompt for clearing the set Birthday Role and disabling this Module in the process
-            const InputRoleId = SplitCustomId[2];
+        else if ( InputAction === 'edit-channel' ) {
+            // Edits which Channel CakeDay should post Birthday Announcements in
+            const InputChannelId = SplitCustomId[2];
 
             responseComponents = [{
                 type: ComponentType.Container,
                 accent_color: rgbArrayToInteger(hexToRgb('#2b68c4')),
                 components: [{
                     type: ComponentType.TextDisplay,
-                    content: `# __CakeDay Settings: Remove Birthday Role__\nAre you sure you want to remove <@&${InputRoleId}> as the assigned Birthday Role from CakeDay in this Server?\n\nDoing so will disable this module and your Members will no longer be granted a Role on their birthday.`
+                    content: `# __CakeDay Settings: Edit Announcement Channel__\nPlease use the Select Menu below to change the Channel CakeDay posts your Members' Birthday Announcements in.\n**This Server's current Birthday Announcement Channel is <#${InputChannelId}>**\n\n> -# :information_source: Please be sure that CakeDay has *both* "**View Channel**" and "**Send Messages**" Permissions at minimum in the new Channel you select.`
+                }, {
+                    type: ComponentType.ActionRow,
+                    components: [{
+                        type: ComponentType.ChannelSelect,
+                        custom_id: `editbirthdaychannel_${InputChannelId}`,
+                        placeholder: `Search for a Channel`,
+                        min_values: 1,
+                        max_values: 1,
+                        channel_types: [ ChannelType.GuildText, ChannelType.GuildAnnouncement, ChannelType.PublicThread ],
+                        default_values: [ { type: SelectMenuDefaultValueType.Channel, id: InputChannelId } ]
+                    }]
+                }, {
+                    type: ComponentType.Separator,
+                    divider: true,
+                    spacing: SeparatorSpacingSize.Large
+                }, {
+                    type: ComponentType.ActionRow,
+                    components: [{
+                        type: ComponentType.Button,
+                        style: ButtonStyle.Secondary,
+                        custom_id: `settingsreturntomainpage`,
+                        label: `Cancel`
+                    }]
+                }]
+            }];
+        }
+        else if ( InputAction === 'remove-channel' ) {
+            // Removes the set Announcement Channel from CakeDay, and disables this module
+            const InputChannelId = SplitCustomId[2];
+
+            responseComponents = [{
+                type: ComponentType.Container,
+                accent_color: rgbArrayToInteger(hexToRgb('#2b68c4')),
+                components: [{
+                    type: ComponentType.TextDisplay,
+                    content: `# __CakeDay Settings: Remove Announcement Channel__\nAre you sure you want to remove <#${InputChannelId}> as this Server's Birthday Announcements Channel?\n\nDoing so will disable this module and prevent CakeDay from posting about your Members' birthdays in this Server.`
                 }, {
                     type: ComponentType.ActionRow,
                     components: [{
@@ -121,11 +123,22 @@ export const Button = {
                     }, {
                         type: ComponentType.Button,
                         style: ButtonStyle.Danger,
-                        custom_id: `removebirthdayrole`,
+                        custom_id: `removebirthdaychannel`,
                         label: `Confirm removal`
                     }]
                 }]
             }];
+        }
+        else if ( InputAction === 'add-color' ) {
+            // TODO: Sets a sidebar colour for posted Announcements
+        }
+        else if ( InputAction === 'edit-color' ) {
+            // TODO: Edits the set sidebar colour for posted Announcements
+            const InputHexColor = SplitCustomId[2];
+        }
+        else {
+            // TODO: Removes the sidebar from posted Announcements
+            const InputHexColor = SplitCustomId[2];
         }
 
 
