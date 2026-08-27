@@ -6,6 +6,19 @@ import { DISCORD_TOKEN } from '../config.js';
 // *******************************
 //  Exports
 
+// TYPINGS
+/**
+ * @typedef {Object} GuildConfigSchema
+ * @property {String} guild_id ID of the Discord Guild
+ * @property {?String} birthday_role_id ID of the Role in the Discord Guild to grant as the Birthday Role
+ * @property {?String} announcement_channel_id ID of the Text-based Channel in the Discord Guild to post Cake Days in
+ * @property {?String} announcement_sidebar_color Colour, in Hex format such as #4488cc, of the sidebar in the Cake Day posts
+ * 
+ * @public
+ */
+
+
+
 /** Utility & Command/Interaction Collections */
 export const UtilityCollections = {
     /** Holds all Cooldowns for Slash Commands, mapped by "commandName_userID"
