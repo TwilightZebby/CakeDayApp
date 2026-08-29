@@ -50,7 +50,7 @@ Furthermore, some of these Commands have default Permission requirements set - m
 
 # Questions
 
-## Do you have a support Server for TwiLite?
+## Do you have a support Server for CakeDay?
 > No, I do not. However, I do have a [personal Server](https://discord.gg/EU97z7bhhx) which I *guess* you could use?
 > 
 > **Though I'd prefer it if you kept any bug reports, support requests, and feature requests for CakeDay to this GitHub page.**
