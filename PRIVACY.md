@@ -1,7 +1,7 @@
 # CakeDay - Privacy Policy
-Last Updated: ?? August 2026
+Last Updated: 29th August 2026
 
-Effective: ?? August 2026
+Effective: 29th August 2026
 
 ---
 
@@ -35,6 +35,16 @@ In order to provide its core functionality, Members of Servers with **CakeDay** 
 This information is stored securely, and is only used for providing the core functionality of posting birthday announcements and granting Server Roles to Server Members on their birthdays.
 
 Should a Server Member want to have their birth day/month removed from **CakeDay**, they can do so via use of the **`/birthday remove`** Slash Command.
+
+### Server Settings
+In other to provide its core functionality, Admins of Servers with **CakeDay** added may *optionally* and *manually* input the IDs of Roles or Channels in the Server via use of the **`/settings`** Slash Command. These IDs are used for the following reasons:
+
+- **Role IDs** are used to power the "Birthday Role" module; granting/revoking the specified Role on a/some Members' birthdays
+- **Channel IDs** are used to power the "Birthday Announcements" module; posting in the specified text-based Channel when its a/some Members' birthdays
+
+This information is stored securely, and is only used for the functionality mentioned above.
+
+Should the Server no longer want the specified information stored in **CakeDay**, they can remove said information via use of the **`/settings`** Slash Command.
 
 ---
 

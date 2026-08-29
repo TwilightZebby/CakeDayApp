@@ -22,12 +22,19 @@ If you want to localise commands themselves, you can find them in `/Commands/Sla
 ---
 
 # Features List
-To be written.
+## Birthday Role
+Assign a Role that gets automatically granted to your Members when it's their Birthday.
+
+## Birthday Announcements
+Set a Channel (Text, Announcement, or Thread) where CakeDay will announce your Members' Birthdays in.
 
 ---
 
 # Commands List
-To be written.
+| Command | Description | Default Permissions |
+|---------|-------------|---------------------|
+| `/birthday` | Used to set or remove your own birthday in CakeDay | - |
+| `/settings` | Manage CakeDay's settings for that Server | Manage Server |
 
 ---
 

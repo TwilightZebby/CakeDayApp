@@ -1,7 +1,7 @@
 # CakeDay - Terms of Service (ToS)
-Last Updated: ?? August 2026
+Last Updated: 29th August 2026
 
-Effective: ?? August 2026
+Effective: 29th August 2026
 
 ---
 
