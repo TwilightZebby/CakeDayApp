@@ -3,10 +3,11 @@ module.exports = {
     // ******* GENERIC STUFF
     DELETE: `Delete`,
     CANCEL: `Cancel`,
+    CONFIRM: `Confirm`,
 
     ERROR_GENERIC: `An error has occurred.`,
     ERROR_GENERIC_WITH_PREVIEW: `An error has occurred. A preview of the raw error is as follows:\n\`\`\`{{0}}\`\`\``,
-    ERROR_INVALID_COLOR_HEX: `That wasn't a valid hex colour code! Please try again, using a valid hex colour code, including the \`#\` (hash) at the start. For example: \`#62af4d\``,
+    ERROR_GENERIC_THIS_SHOULD_NOT_APPEAR: `Something went badly wrong. If you see this error, please let TwilightZebby know by either:\n- \`@ping\`ing or DMing him on Discord\n- OR by opening an [Issue on his GitHub](<https://github.com/TwilightZebby/CakeDayApp/issues/new/choose>)`,
 
 
 
@@ -66,5 +67,17 @@ module.exports = {
 
 
 
-    // ******* PLACEHOLDER
+    // ******* BIRTHDAY COMMAND
+    BIRTHDAY_COMMAND_SET_FEBRUARY_CONFIRMATION: `You are about to set your birthday as 29th February, a date that can only exist during Leap Years.\nAs such, CakeDay will treat 28th February as your birthday on other (non-leap) years.\n\nPlease confirm using the button below if this is suitable for you. If not, you can delete/dismiss this message and your birthday will *NOT* be saved.`,
+    BIRTHDAY_COMMAND_SET_SUCCESSFUL: `Successfully added your birthday to CakeDay!`,
+
+    BIRTHDAY_COMMAND_SET_ERROR_GENERIC: `Sorry, but something went wrong while trying to save your newly added birthday. Please try again later...`,
+    BIRTHDAY_COMMAND_SET_ERROR_BIRTHDAY_ALREADY_SET: `You already have a birthday set in CakeDay!\nIf you wish to remove your birthday from this App, use {{0}}`,
+    BIRTHDAY_COMMAND_SET_ERROR_MONTH_ONLY_HAS_30_DAYS: `Sorry, but that wasn't a valid date! (For April/June/September/November, it must be between 1 and 30, inclusive)`,
+    BIRTHDAY_COMMAND_SET_ERROR_FEBRUARY_ONLY_HAS_29_DAYS_MAXIMUM: `Sorry, but that wasn't a valid date! (For February, it must be between 1 and 29, inclusive)`,
+
+    BIRTHDAY_COMMAND_REMOVE_SUCCESSFUL: `Successfully removed your birthday from CakeDay.`,
+
+    BIRTHDAY_COMMAND_REMOVE_ERROR_GENERIC: `Sorry, but something went wrong while trying to remove your birthday from CakeDay. Please try again later...`,
+    BIRTHDAY_COMMAND_REMOVE_ERROR_NO_BIRTHDAY_STORED: `You do not have a birthday save in CakeDay.\nIf you wish to add your birthday to this App, use {{0}}`,
 }

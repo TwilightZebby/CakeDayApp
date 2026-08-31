@@ -2,22 +2,7 @@
 
 A Discord Server App for announcing birthdays and managing Birthday Roles for your Server Members.
 
-Want to add CakeDay to your Server? Use this [Add App link here](https://discord.com/oauth2/authorize?client_id=1504090747475853523).
-
----
-
-# Contributing
-Want to help localise CakeDay into more languages? Feel free to open a [Pull Request](https://github.com/TwilightZebby/CakeDay/pulls) to do so!
-Please remember that only languages supported by Discord (as noted on [their API Documentation here](https://discord.com/developers/docs/reference#locales)) are supported by CakeDay.
-
-If you want to localise the command/interaction responses:
-1. Go into the `/Locales/` folder
-2. Copy the `en-GB.cjs` file, paste a duplicate within that same folder, and rename it to the language you want to add (using the locale key from the "LOCALE" column on Discord's locale [Documentation table here](https://discord.com/developers/docs/reference#locales) as the file name)
-  - *PLEASE remember to keep the `.cjs` file extension! Also, the original/main locale for CakeDay is `en-GB`, hence the request to use that one as the base.*
-3. Be sure to also update the `appLocales` constant at the very top of `/Utility/localizeResponses.js` file, to include the new locale you are adding
-
-If you want to localise commands themselves, you can find them in `/Commands/SlashCommands`.
-**Please note:** Only localise descriptions for Commands & Command Options. Do **NOT** localise the Command/Option names, as Discord still is a little funky when handling localised Command/Option names.
+This App has been made specifically for [Dr1fterX's](https://twitch.tv/Dr1fterX) Discord Community. As such, it will not be made available for public use.
 
 ---
 
@@ -50,7 +35,5 @@ Furthermore, some of these Commands have default Permission requirements set - m
 
 # Questions
 
-## Do you have a support Server for CakeDay?
-> No, I do not. However, I do have a [personal Server](https://discord.gg/EU97z7bhhx) which I *guess* you could use?
-> 
-> **Though I'd prefer it if you kept any bug reports, support requests, and feature requests for CakeDay to this GitHub page.**
+## Why is CakeDay not available for public use?
+> Due to the nature of personal information CakeDay asks for & stores in order to function, TwilightZebby is not comfortable with making this App available for public use outside of Dr1fterX's Discord Server.

@@ -1,5 +1,6 @@
 import { ApplicationCommandType, InteractionContextType, ApplicationIntegrationType, MessageFlags, InteractionResponseType, ApplicationCommandOptionType, ComponentType, ButtonStyle } from 'discord-api-types/v10';
 import { JsonResponse } from '../../../Utility/utilityMethods.js';
+import { localize } from '../../../Utility/localizeResponses.js';
 
 
 const MonthsWith31Days = [ 0, 2, 4, 6, 7, 9, 11 ];
@@ -167,7 +168,7 @@ export const SlashCommand = {
                     type: InteractionResponseType.ChannelMessageWithSource,
                     data: {
                         flags: MessageFlags.Ephemeral,
-                        content: `You already have a birthday set in CakeDay!\nIf you wish to remove your birthday from this App, use </birthday remove:${interaction.data.id}>`
+                        content: localize(interaction.locale, 'BIRTHDAY_COMMAND_SET_ERROR_BIRTHDAY_ALREADY_SET')
                     }
                 });
             }
@@ -187,7 +188,7 @@ export const SlashCommand = {
                     type: InteractionResponseType.ChannelMessageWithSource,
                     data: {
                         flags: MessageFlags.Ephemeral,
-                        content: `Sorry, but that wasn't a valid date! (For April/June/September/November, it must be between 1 and 30, inclusive)`
+                        content: localize(interaction.locale, 'BIRTHDAY_COMMAND_SET_ERROR_MONTH_ONLY_HAS_30_DAYS')
                     }
                 });
             }
@@ -196,7 +197,7 @@ export const SlashCommand = {
                     type: InteractionResponseType.ChannelMessageWithSource,
                     data: {
                         flags: MessageFlags.Ephemeral,
-                        content: `Sorry, but that wasn't a valid date! (For February, it must be between 1 and 29, inclusive)`
+                        content: localize(interaction.locale, 'BIRTHDAY_COMMAND_SET_ERROR_FEBRUARY_ONLY_HAS_29_DAYS_MAXIMUM')
                     }
                 });
             }
@@ -204,14 +205,14 @@ export const SlashCommand = {
                 /** @type {import("discord-api-types/v10").APIMessageTopLevelComponent[]} */
                 let responseComponents = [{
                     type: ComponentType.TextDisplay,
-                    content: `You are about to set your birthday as 29th February, a date that can only exist during Leap Years.\nAs such, CakeDay will treat 28th February as your birthday on other (non-leap) years.\n\nPlease confirm using the button below if this is suitable for you. If not, you can delete/dismiss this message and your birthday will *NOT* be saved.`
+                    content: localize(interaction.locale, 'BIRTHDAY_COMMAND_SET_FEBRUARY_CONFIRMATION')
                 }, {
                     type: ComponentType.ActionRow,
                     components: [{
                         type: ComponentType.Button,
                         style: ButtonStyle.Primary,
                         custom_id: `feb29_${interactionUser.id}_${IntInputMonth}_${InputDay.value}`,
-                        label: `Confirm`
+                        label: localize(interaction.locale, 'CONFIRM')
                     }]
                 }];
 
@@ -235,7 +236,7 @@ export const SlashCommand = {
                             type: InteractionResponseType.ChannelMessageWithSource,
                             data: {
                                 flags: MessageFlags.Ephemeral,
-                                content: `Sorry, but something went wrong while trying to save your newly added birthday. Please try again later...`
+                                content: localize(interaction.locale, 'BIRTHDAY_COMMAND_SET_ERROR_GENERIC')
                             }
                         });
                     }
@@ -244,7 +245,7 @@ export const SlashCommand = {
                             type: InteractionResponseType.ChannelMessageWithSource,
                             data: {
                                 flags: MessageFlags.Ephemeral,
-                                content: `Successfully added your birthday to CakeDay!`
+                                content: localize(interaction.locale, 'BIRTHDAY_COMMAND_SET_SUCCESSFUL')
                             }
                         });
                     }
@@ -254,7 +255,7 @@ export const SlashCommand = {
                         type: InteractionResponseType.ChannelMessageWithSource,
                         data: {
                             flags: MessageFlags.Ephemeral,
-                            content: `Sorry, but something went wrong while trying to save your newly added birthday. Please try again later...`
+                            content: localize(interaction.locale, 'BIRTHDAY_COMMAND_SET_ERROR_GENERIC')
                         }
                     });
                 }
@@ -268,7 +269,7 @@ export const SlashCommand = {
                     type: InteractionResponseType.ChannelMessageWithSource,
                     data: {
                         flags: MessageFlags.Ephemeral,
-                        content: `You do not have a birthday saved in CakeDay.\nIf you wish to add your birthday to this App, use </birthday set:${interaction.data.id}>`
+                        content: localize(interaction.locale, 'BIRTHDAY_COMMAND_REMOVE_ERROR_NO_BIRTHDAY_STORED')
                     }
                 });
             }
@@ -285,7 +286,7 @@ export const SlashCommand = {
                         type: InteractionResponseType.ChannelMessageWithSource,
                         data: {
                             flags: MessageFlags.Ephemeral,
-                            content: `Sorry, but something went wrong while trying to remove your birthday from CakeDay. Please try again later...`
+                            content: localize(interaction.locale, 'BIRTHDAY_COMMAND_REMOVE_ERROR_GENERIC')
                         }
                     });
                 }
@@ -294,7 +295,7 @@ export const SlashCommand = {
                         type: InteractionResponseType.ChannelMessageWithSource,
                         data: {
                             flags: MessageFlags.Ephemeral,
-                            content: `Successfully removed your birthday from CakeDay`
+                            content: localize(interaction.locale, 'BIRTHDAY_COMMAND_REMOVE_SUCCESSFUL')
                         }
                     });
                 }
@@ -304,7 +305,7 @@ export const SlashCommand = {
                     type: InteractionResponseType.ChannelMessageWithSource,
                     data: {
                         flags: MessageFlags.Ephemeral,
-                        content: `Sorry, but something went wrong while trying to remove your birthday from CakeDay. Please try again later...`
+                        content: localize(interaction.locale, 'BIRTHDAY_COMMAND_REMOVE_ERROR_GENERIC')
                     }
                 });
             }
@@ -314,7 +315,7 @@ export const SlashCommand = {
             type: InteractionResponseType.ChannelMessageWithSource,
             data: {
                 flags: MessageFlags.Ephemeral,
-                content: "Something went badly wrong. If you see this error, please let CakeDay's developer know by either:\n- Opening an [Issue on GitHub](<https://github.com/TwilightZebby/CakeDayApp/issues/new/choose>)\n- Or via letting `@twilightzebby` know on Discord (if you're in a mutual Server with him)"
+                content: localize(interaction.locale, 'ERROR_GENERIC_THIS_SHOULD_NOT_APPEAR')
             }
         });
     }

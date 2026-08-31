@@ -1,6 +1,6 @@
 {
   "name": "cakeday",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A Discord Server App for announcing member birthdays and managing birthday roles",
   "main": "index.js",
   "type": "module",

@@ -1,7 +1,7 @@
 # CakeDay - Privacy Policy
-Last Updated: 29th August 2026
+Last Updated: 31st August 2026
 
-Effective: 29th August 2026
+Effective: 31st August 2026
 
 ---
 
@@ -17,17 +17,6 @@ The developers of **CakeDay** firmly believes in a "we don't want your data keep
 
 ## Data Collection & Purposes
 TwiLite currently does *not* collect or store *any* data or information from any Users or Servers that use or interact with CakeDay, apart from what is listed below.
-
-### Logging
-**CakeDay** will log when it has been added (otherwise referred to as "authorized") or removed (or "deauthorized") as a Server App to a Discord Server.
-
-The only information included in this log are:
-- **When added as a Server App:**
-  - Which User added **CakeDay** to a Server (specifically, the User's display/user name, and ID)
-  - Which Server **CakeDay** was added to (specifically, the Server's name & ID)
-  - and which Scopes **CakeDay** was authorized with (commonly `application.commands` for its Slash Commands, and `bot` for its Bot User)
-
-This is purely for informational purposes (such as tracking the App's growth), and this information will NOT be given or sold to anyone else.
 
 ### User Birthdays
 In order to provide its core functionality, Members of Servers with **CakeDay** added will be able to use **CakeDay**'s Commands to *manually* input the day and month of their own birthday via use of the **`/birthday set`** Slash Command. Birth year is *never* asked for by **CakeDay**.

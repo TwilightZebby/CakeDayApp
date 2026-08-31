@@ -1,4 +1,4 @@
-import { ApplicationWebhookEventType, ApplicationWebhookType, ComponentType, InteractionResponseType, InteractionType, MessageFlags } from 'discord-api-types/v10';
+import { ComponentType, InteractionResponseType, InteractionType, MessageFlags } from 'discord-api-types/v10';
 import { isChatInputApplicationCommandInteraction, isContextMenuApplicationCommandInteraction, isMessageComponentButtonInteraction, isMessageComponentSelectMenuInteraction } from 'discord-api-types/utils';
 import { AutoRouter } from 'itty-router';
 import { verifyKey } from 'discord-interactions';
@@ -9,8 +9,6 @@ import { handleButton } from './Handlers/Interactions/buttonHandler.js';
 import { handleSelect } from './Handlers/Interactions/selectHandler.js';
 import { handleAutocomplete } from './Handlers/Interactions/autocompleteHandler.js';
 import { handleModal } from './Handlers/Interactions/modalHandler.js';
-import { handleAppAuthorized } from './Handlers/WebhookEvents/applicationAuthorized.js';
-import { handleAppDeauthorized } from './Handlers/WebhookEvents/applicationDeauthorized.js';
 import { DISCORD_APP_PUBLIC_KEY, MAIN_GUILD_ID } from './config.js';
 import { hexToRgb, JsonResponse, rgbArrayToInteger } from './Utility/utilityMethods.js';
 import { DefaultDiscordRequestHeaders, DefaultDiscordRequestHeadersWithAuditLog } from './Utility/utilityConstants.js';
@@ -31,30 +29,6 @@ const router = AutoRouter();
 /** Wave to verify CF worker is working */
 router.get('/', (request, env) => {
     return new Response(`👏`);
-});
-
-
-
-
-
-
-
-
-// *******************************
-// For receiving the scheduled Cron Job to check for birthdays happening
-//   Cron runs hourly (every hour on the hour), due to also supporting different timezones
-
-router.get('/check-birthdays', async (request, env) => {
-    // Clone request (to not affect original)
-    const ClonedRequest = request.clone();
-
-    // Verify request
-    const AuthHeader = request.headers.get("Authorization");
-    //.
-
-
-
-    return new Response('No Content.', { status: 204 });
 });
 
 
@@ -116,55 +90,11 @@ router.post('/', async (request, env) => {
 
 
 // *******************************
-/** For incoming Webhook Events from Discord. They may include a JSON payload */
-router.post('/discord-webhook', async (request, env) => {
-    // Verify request
-    const { isValid, interaction, cfEnv } = await server.verifyDiscordRequest(request, env);
-    
-    if ( !isValid || !interaction ) {
-        return new Response('Bad request signature.', { status: 401 });
-    }
-
-
-    // Handle PING Event
-    if ( interaction.type === ApplicationWebhookType.Ping ) {
-        return new Response(null, { status: 204 });
-    }
-    
-    // Handle Webhook Events
-    /** @type {import('discord-api-types/v10').APIWebhookEvent} */
-    const WebhookEvent = interaction;
-    
-    // APPLICATION_AUTHORIZED Event
-    if ( WebhookEvent.event.type === ApplicationWebhookEventType.ApplicationAuthorized ) {
-        return await handleAppAuthorized(WebhookEvent);
-    }
-    // APPLICATION_DEAUTHORIZED Event
-    else if ( WebhookEvent.event.type === ApplicationWebhookEventType.ApplicationDeauthorized ) {
-        return await handleAppDeauthorized(WebhookEvent);
-    }
-    // Just in case
-    else {
-        return new Response(null, { status: 204 });
-    }
-});
-
-
-
-
-
-
-
-
-
-// *******************************
 /** Checks for birthdays daily at 00:00 UTC */
 async function scheduledCronTask(controller, cfEnv, ctx) {
     // Listen this Bot is probably only going to be used by Dr1fterX's Server,
     //   So instead of doing a whole "fetch all Guilds this App is added to, check if Birthday Users are Members of those Guilds, then grant Roles and post announcements based off that" thing,
     //   I'm just going to hard-code this bit to be for Dr1fterX's Server for now.
-    //   
-    //   I'll make this dynamic and support multiple Guilds in the future. Maybe. Time will tell.
 
 
     // Grab current config
